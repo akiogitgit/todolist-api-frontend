@@ -1,7 +1,8 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import axios from 'axios'
 
 interface users {
   created_at: string
@@ -22,6 +23,14 @@ interface todos {
   user_id: number
 }
 
+interface CreateUsers {
+  id: number
+  name: string
+  // password_digest: string
+  password: string
+  password_confirmation: string
+}
+
 interface createTodo {
   content: string
   importance: number
@@ -32,7 +41,11 @@ interface createTodo {
 const Home: NextPage = () => {
   const [users, setUsers] = useState<users[]>([])
   const [todos, setTodos] = useState<todos[]>([])
-  const [createTodos, setCreateTodos] = useState<todos[]>([])
+  // const [createTodos, setCreateTodos] = useState<todos[]>([])
+
+  const [name, setName] = useState('')
+  const [password, setPassword] = useState('')
+  const [passwordConfirmation, setPasswordConfirmation] = useState('')
 
   const getApi = async (url: string) => {
     try {
@@ -42,6 +55,47 @@ const Home: NextPage = () => {
       throw err
     }
   }
+
+  const createUser = (e: React.FormEvent<HTMLFormElement>) => {
+    // const createUser = () => {
+    axios
+      .post(String(process.env.NEXT_PUBLIC_DEV_API_URL) + 'users', {
+        user: {
+          name: name,
+          password: password,
+          password_confirmation: passwordConfirmation,
+        },
+      })
+      .then((res) => {
+        console.log('create user', res.data)
+      })
+      .catch((err) => {
+        console.log('registration error', err)
+      })
+    console.log('create user')
+    e.preventDefault()
+  }
+
+  const deleteUser = (id: number) => {
+    axios
+      .delete(String(process.env.NEXT_PUBLIC_DEV_API_URL) + `users/${id}`)
+      .then((res) => {
+        console.log('delete user', res.data)
+      })
+  }
+
+  const update = (id: number) => {
+    axios
+      .patch(String(process.env.NEXT_PUBLIC_DEV_API_URL) + `users/${id}`, {
+        name: 'name',
+        password: 'pass',
+        password_confirmation: 'pass',
+      })
+      .then((res) => {
+        console.log('update user', res.data)
+      })
+  }
+
   useEffect(() => {
     // userを取得
     getApi(String(process.env.NEXT_PUBLIC_DEV_API_URL) + 'users').then(
@@ -80,6 +134,38 @@ const Home: NextPage = () => {
       </Head>
       <main>
         <div>index</div>
+        <div
+          // onClick={createUser}
+          className='inline py-1 px-3 text-lg border-2 border-black bg-black text-white rounded duration-300 hover:bg-white hover:text-black cursor-pointer'
+        >
+          POST
+        </div>
+
+        <form onSubmit={createUser}>
+          <input
+            type='text'
+            name='name'
+            placeholder='名前'
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+          <input
+            type='password'
+            name='password'
+            placeholder='パスワード'
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <input
+            type='password'
+            name='password_confirmation'
+            placeholder='確認パスワード'
+            value={passwordConfirmation}
+            onChange={(e) => setPasswordConfirmation(e.target.value)}
+          />
+          <button type='submit'>作成</button>
+        </form>
+
         <div>
           {users &&
             users.map((v, i) => (

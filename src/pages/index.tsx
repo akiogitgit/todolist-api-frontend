@@ -50,11 +50,15 @@ const Home: NextPage = () => {
   const [password, setPassword] = useState('')
   const [passwordConfirmation, setPasswordConfirmation] = useState('')
 
-  const user_id = 4
+  const [id, setId] = useState(0)
+  const [userId, setUserId] = useState(4)
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [importance, setImportance] = useState(1)
   const [finished, setFinished] = useState(false)
+
+  // postとpatchを見分けたい
+  const [method, setMethod] = useState('post')
 
   const getApi = async (url: string) => {
     try {
@@ -69,7 +73,7 @@ const Home: NextPage = () => {
     axios
       .post(String(process.env.NEXT_PUBLIC_DEV_API_URL) + 'todos', {
         todo: {
-          user_id: user_id,
+          user_id: userId,
           title: title,
           content: content,
           importance: importance,
@@ -94,16 +98,31 @@ const Home: NextPage = () => {
       })
   }
 
-  const update = (id: number) => {
+  const setUpdateTodo = (todo: todos) => {
+    setId(todo.id)
+    setUserId(todo.user_id)
+    setTitle(todo.title)
+    setContent(todo.content)
+    setImportance(todo.importance)
+    setFinished(todo.finished)
+    setMethod('patch')
+  }
+
+  const updateTodo = (e: React.FormEvent<HTMLFormElement>) => {
     axios
-      .patch(String(process.env.NEXT_PUBLIC_DEV_API_URL) + `users/${id}`, {
-        name: 'name',
-        password: 'pass',
-        password_confirmation: 'pass',
+      .patch(String(process.env.NEXT_PUBLIC_DEV_API_URL) + `todos/${id}`, {
+        todo: {
+          // user_id: userId,
+          title: title,
+          content: content,
+          importance: importance,
+          finished: finished,
+        },
       })
       .then((res) => {
         console.log('update user', res.data)
       })
+    e.preventDefault()
   }
 
   useEffect(() => {
@@ -135,6 +154,14 @@ const Home: NextPage = () => {
     )
   }, [])
 
+  // const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  //   e.preventDefault()
+  //   if (method === 'post') {
+  //     createTodo()
+  //   } else {
+  //     updateTodo()
+  //   }
+  // }
   return (
     <Layout>
       <Head>
@@ -145,7 +172,10 @@ const Home: NextPage = () => {
       <main>
         <h1>index</h1>
         <p>user_id: 4</p>
-        <form onSubmit={createTodo}>
+        <form
+          onSubmit={(e) => (method === 'put' ? createTodo(e) : updateTodo(e))}
+        >
+          {/* <form onSubmit={handleSubmit}> */}
           <input
             type='text'
             name='title'
@@ -193,7 +223,7 @@ const Home: NextPage = () => {
             type='submit'
             className='w-[67px] py-1 px-3 text-lg border-2 border-blue-500 bg-blue-500 text-white rounded duration-300 hover:bg-white hover:text-blue-500 cursor-pointer'
           >
-            作成
+            {method === 'post' ? '作成' : '更新'}
           </button>
         </form>
 
@@ -214,13 +244,17 @@ const Home: NextPage = () => {
             todos.map((v, i) => (
               <ul key={i} className='my-4'>
                 <li>id: {v.id}</li>
+                <li>user_id: {v.user_id}</li>
                 <li>title: {v.title}</li>
                 <li>content: {v.content}</li>
                 <li>important: {v.importance}</li>
                 <li>finished: {v.finished ? 'true' : 'false'}</li>
                 <li>create: {v.created_at}</li>
                 <li>update: {v.updated_at}</li>
-                <li className='w-[67px] py-1 px-3 text-lg border-2 border-blue-500 bg-blue-500 text-white rounded duration-300 hover:bg-white hover:text-blue-500 cursor-pointer'>
+                <li
+                  onClick={() => setUpdateTodo(v)}
+                  className='w-[67px] py-1 px-3 text-lg border-2 border-blue-500 bg-blue-500 text-white rounded duration-300 hover:bg-white hover:text-blue-500 cursor-pointer'
+                >
                   編集
                 </li>
                 <li

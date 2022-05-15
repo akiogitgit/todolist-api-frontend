@@ -86,9 +86,9 @@ const Home: NextPage = () => {
     e.preventDefault()
   }
 
-  const deleteUser = (id: number) => {
+  const deleteTodo = (id: number) => {
     axios
-      .delete(String(process.env.NEXT_PUBLIC_DEV_API_URL) + `users/${id}`)
+      .delete(String(process.env.NEXT_PUBLIC_DEV_API_URL) + `todos/${id}`)
       .then((res) => {
         console.log('delete user', res.data)
       })
@@ -220,6 +220,15 @@ const Home: NextPage = () => {
                 <li>finished: {v.finished ? 'true' : 'false'}</li>
                 <li>create: {v.created_at}</li>
                 <li>update: {v.updated_at}</li>
+                <li className='w-[67px] py-1 px-3 text-lg border-2 border-blue-500 bg-blue-500 text-white rounded duration-300 hover:bg-white hover:text-blue-500 cursor-pointer'>
+                  編集
+                </li>
+                <li
+                  onClick={() => deleteTodo(v.id)}
+                  className='w-[67px] py-1 px-3 text-lg border-2 border-red-500 bg-red-500 text-white rounded duration-300 hover:bg-white hover:text-red-500 cursor-pointer'
+                >
+                  削除
+                </li>
               </ul>
             ))}
         </div>

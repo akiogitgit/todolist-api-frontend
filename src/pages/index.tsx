@@ -34,10 +34,11 @@ interface CreateUsers {
 }
 
 interface createTodo {
+  user_id: number
+  title: string
   content: string
   importance: number
-  title: string
-  user_id: number
+  finished: boolean
 }
 
 const Home: NextPage = () => {
@@ -49,6 +50,12 @@ const Home: NextPage = () => {
   const [password, setPassword] = useState('')
   const [passwordConfirmation, setPasswordConfirmation] = useState('')
 
+  const user_id = 4
+  const [title, setTitle] = useState('')
+  const [content, setContent] = useState('')
+  const [importance, setImportance] = useState(1)
+  const [finished, setFinished] = useState(false)
+
   const getApi = async (url: string) => {
     try {
       const res = await fetch(url)
@@ -58,14 +65,15 @@ const Home: NextPage = () => {
     }
   }
 
-  const createUser = (e: React.FormEvent<HTMLFormElement>) => {
-    // const createUser = () => {
+  const createTodo = (e: React.FormEvent<HTMLFormElement>) => {
     axios
-      .post(String(process.env.NEXT_PUBLIC_DEV_API_URL) + 'users', {
-        user: {
-          name: name,
-          password: password,
-          password_confirmation: passwordConfirmation,
+      .post(String(process.env.NEXT_PUBLIC_DEV_API_URL) + 'todos', {
+        todo: {
+          user_id: user_id,
+          title: title,
+          content: content,
+          importance: importance,
+          finished: finished,
         },
       })
       .then((res) => {
@@ -136,34 +144,61 @@ const Home: NextPage = () => {
       </Head>
       <main>
         <h1>index</h1>
-
-        <form onSubmit={createUser}>
+        <p>user_id: 4</p>
+        <form onSubmit={createTodo}>
           <input
             type='text'
-            name='name'
-            placeholder='名前'
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            name='title'
+            placeholder='title'
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
           />
           <input
-            type='password'
-            name='password'
-            placeholder='パスワード'
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            type='text'
+            name='content'
+            placeholder='content'
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
           />
           <input
-            type='password'
-            name='password_confirmation'
-            placeholder='確認パスワード'
-            value={passwordConfirmation}
-            onChange={(e) => setPasswordConfirmation(e.target.value)}
+            type='number'
+            name='importance'
+            value={importance}
+            onChange={(e) => setImportance(Number(e.target.value))}
           />
-          <button type='submit'>作成</button>
+          <br></br>
+          <label htmlFor='true' className='cursor-pointer'>
+            <input
+              type='radio'
+              id='true'
+              name='finished'
+              className='mt-4'
+              checked={finished}
+              onChange={() => setFinished(true)}
+            />
+            完了
+          </label>
+          <label htmlFor='false' className='cursor-pointer'>
+            <input
+              type='radio'
+              id='false'
+              name='publish'
+              checked={!finished}
+              onChange={() => setFinished(false)}
+            />
+            未完了
+          </label>
+          <br></br>
+          <button
+            type='submit'
+            className='w-[67px] py-1 px-3 text-lg border-2 border-blue-500 bg-blue-500 text-white rounded duration-300 hover:bg-white hover:text-blue-500 cursor-pointer'
+          >
+            作成
+          </button>
         </form>
 
         <div>
-          {users &&
+          {/* {users &&
             users.map((v, i) => (
               <ul key={i} className='my-4'>
                 <li>id: {v.id}</li>
@@ -171,7 +206,7 @@ const Home: NextPage = () => {
                 <li>create: {v.created_at}</li>
                 <li>update: {v.updated_at}</li>
               </ul>
-            ))}
+            ))} */}
         </div>
 
         <div>
@@ -182,7 +217,7 @@ const Home: NextPage = () => {
                 <li>title: {v.title}</li>
                 <li>content: {v.content}</li>
                 <li>important: {v.importance}</li>
-                <li>finished: {v.finished}</li>
+                <li>finished: {v.finished ? 'true' : 'false'}</li>
                 <li>create: {v.created_at}</li>
                 <li>update: {v.updated_at}</li>
               </ul>

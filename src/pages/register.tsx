@@ -2,6 +2,7 @@ import axios from 'axios'
 import { NextPage } from 'next'
 import Link from 'next/link'
 import { useState } from 'react'
+import Layout from '../components/Layout'
 const Register: NextPage = () => {
   const [name, setName] = useState('')
   const [password, setPassword] = useState('')
@@ -27,7 +28,7 @@ const Register: NextPage = () => {
   }
 
   return (
-    <>
+    <Layout>
       <Link href='/'>index</Link>
       <h1>ユーザー登録ページ</h1>
 
@@ -60,7 +61,7 @@ const Register: NextPage = () => {
           <button type='submit'>作成</button>
         </form>
       </section>
-    </>
+    </Layout>
   )
 }
 

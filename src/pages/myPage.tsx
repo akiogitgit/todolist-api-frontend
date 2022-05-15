@@ -39,6 +39,10 @@ const MyPage: NextPage = () => {
     <Layout>
       <div>mypage</div>
 
+      <div className='mt-4'>akio</div>
+      <div>投稿一覧</div>
+
+      <div className='mt-10'>編集</div>
       <form onSubmit={(e) => update(e, 3)}>
         <input
           type='text'
@@ -72,7 +76,7 @@ const MyPage: NextPage = () => {
 
       <button
         onClick={() => deleteUser(3)}
-        className='px-1 border-2 border-red-500 bg-red-500 rounded text-white font-bold duration-300 hover:bg-white hover:text-red-500 hover:rotate-[360deg] hover:scale-[1.2] hover:skew-x-12 '
+        className='px-1 border-2 border-red-500 bg-red-500 rounded text-white font-bold duration-300 hover:bg-white hover:text-red-500 hover:scale-[1.05] hover:shadow-2xl'
       >
         ユーザーを削除
       </button>

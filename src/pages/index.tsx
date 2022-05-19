@@ -50,7 +50,7 @@ const Home: NextPage = () => {
   const [password, setPassword] = useState('')
   const [passwordConfirmation, setPasswordConfirmation] = useState('')
 
-  const [id, setId] = useState(0)
+  const [id, setId] = useState(0) // update, delete
   const [userId, setUserId] = useState(4)
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
@@ -173,31 +173,59 @@ const Home: NextPage = () => {
         <h1>index</h1>
         <p>user_id: 4</p>
         <form
-          onSubmit={(e) => (method === 'put' ? createTodo(e) : updateTodo(e))}
+          className='bg-white mt-4 py-4 px-10 rounded-2xl shadow-lime-200 shadow-lg '
+          onSubmit={(e) => (method === 'post' ? createTodo(e) : updateTodo(e))}
         >
           {/* <form onSubmit={handleSubmit}> */}
-          <input
-            type='text'
-            name='title'
-            placeholder='title'
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-          <input
-            type='text'
-            name='content'
-            placeholder='content'
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-          />
-          <input
-            type='number'
-            name='importance'
-            value={importance}
-            onChange={(e) => setImportance(Number(e.target.value))}
-          />
-          <br></br>
-          <label htmlFor='true' className='cursor-pointer'>
+          <div className='flex flex-col text-center justify-center sm:flex-row sm:gap-4'>
+            <div>
+              <input
+                type='text'
+                name='title'
+                value={title}
+                placeholder='Todo名'
+                className='bg-white border-b-2 border-black font-serif outline-none'
+                onChange={(e) => setTitle(e.target.value)}
+              />
+            </div>
+            <div className='mt-6 sm:mt-0'>
+              <input
+                type='text'
+                name='content'
+                value={content}
+                placeholder='内容'
+                className='bg-white border-b-2 border-black font-serif outline-none'
+                onChange={(e) => setContent(e.target.value)}
+              />
+            </div>
+          </div>
+          <div className='flex justify-center items-center gap-10'>
+            <div className='mt-10'>
+              <label>重要度　</label>
+              <input
+                type='range'
+                id='volume'
+                name='volume'
+                min='1'
+                max='3'
+                value={importance}
+                className='bg-black appearance-none h-0.5 hover:shadow-2xl'
+                onChange={(e) => setImportance(Number(e.target.value))}
+              />
+              <span className='translate-x-[130px] translate-y-[-45px] block'>
+                {importance}
+              </span>
+            </div>
+          </div>
+          <div className='flex justify-end'>
+            <button
+              type='submit'
+              className='py-1 px-3 w-[67px] text-lg border-2 border-blue-500 bg-blue-500 text-white rounded duration-300 hover:bg-white hover:text-blue-500 cursor-pointer'
+            >
+              {method === 'post' ? '作成' : '更新'}
+            </button>
+          </div>
+          {/* <label htmlFor='true' className='cursor-pointer'>
             <input
               type='radio'
               id='true'
@@ -217,14 +245,7 @@ const Home: NextPage = () => {
               onChange={() => setFinished(false)}
             />
             未完了
-          </label>
-          <br></br>
-          <button
-            type='submit'
-            className='w-[67px] py-1 px-3 text-lg border-2 border-blue-500 bg-blue-500 text-white rounded duration-300 hover:bg-white hover:text-blue-500 cursor-pointer'
-          >
-            {method === 'post' ? '作成' : '更新'}
-          </button>
+          </label> */}
         </form>
 
         <div>

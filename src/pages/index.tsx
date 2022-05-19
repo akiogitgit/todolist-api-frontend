@@ -50,7 +50,7 @@ const Home: NextPage = () => {
   const [password, setPassword] = useState('')
   const [passwordConfirmation, setPasswordConfirmation] = useState('')
 
-  const [id, setId] = useState(0)
+  const [id, setId] = useState(0) // update, delete
   const [userId, setUserId] = useState(4)
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
@@ -69,6 +69,7 @@ const Home: NextPage = () => {
     }
   }
 
+  // 再読み込みしなきゃいけないから、setTodoにも格納する
   const createTodo = (e: React.FormEvent<HTMLFormElement>) => {
     axios
       .post(String(process.env.NEXT_PUBLIC_DEV_API_URL) + 'todos', {
@@ -173,59 +174,193 @@ const Home: NextPage = () => {
         <h1>index</h1>
         <p>user_id: 4</p>
         <form
-          onSubmit={(e) => (method === 'put' ? createTodo(e) : updateTodo(e))}
+          className='bg-white mt-4 py-4 px-10 rounded-2xl shadow-lime-200 shadow-lg '
+          onSubmit={(e) => (method === 'post' ? createTodo(e) : updateTodo(e))}
         >
           {/* <form onSubmit={handleSubmit}> */}
-          <input
-            type='text'
-            name='title'
-            placeholder='title'
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-          <input
-            type='text'
-            name='content'
-            placeholder='content'
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-          />
-          <input
-            type='number'
-            name='importance'
-            value={importance}
-            onChange={(e) => setImportance(Number(e.target.value))}
-          />
-          <br></br>
-          <label htmlFor='true' className='cursor-pointer'>
-            <input
-              type='radio'
-              id='true'
-              name='finished'
-              className='mt-4'
-              checked={finished}
-              onChange={() => setFinished(true)}
-            />
-            完了
-          </label>
-          <label htmlFor='false' className='cursor-pointer'>
-            <input
-              type='radio'
-              id='false'
-              name='publish'
-              checked={!finished}
-              onChange={() => setFinished(false)}
-            />
-            未完了
-          </label>
-          <br></br>
-          <button
-            type='submit'
-            className='w-[67px] py-1 px-3 text-lg border-2 border-blue-500 bg-blue-500 text-white rounded duration-300 hover:bg-white hover:text-blue-500 cursor-pointer'
-          >
-            {method === 'post' ? '作成' : '更新'}
-          </button>
+          <div className='flex flex-col text-center justify-center sm:flex-row sm:gap-4'>
+            <div>
+              <input
+                type='text'
+                name='title'
+                value={title}
+                placeholder='Todo名'
+                required
+                className='bg-white border-b-2 border-black font-serif outline-none'
+                onChange={(e) => setTitle(e.target.value)}
+              />
+            </div>
+            <div className='mt-6 sm:mt-0'>
+              <input
+                type='text'
+                name='content'
+                value={content}
+                placeholder='内容'
+                className='bg-white border-b-2 border-black font-serif outline-none'
+                onChange={(e) => setContent(e.target.value)}
+              />
+            </div>
+          </div>
+          <div className='flex flex-col sm:flex-row justify-center items-center sm:gap-4'>
+            <div className='mt-10 sm:w-[220px]'>
+              <label>重要度　</label>
+              <input
+                type='range'
+                id='volume'
+                name='volume'
+                min='1'
+                max='3'
+                value={importance}
+                className='bg-black appearance-none h-0.5 hover:shadow-2xl'
+                onChange={(e) => setImportance(Number(e.target.value))}
+              />
+              <span className='translate-x-[130px] translate-y-[-45px] block w-'>
+                {importance}
+              </span>
+            </div>
+
+            <div className='sm:w-[220px]'>
+              {method === 'patch' && (
+                <div>
+                  <label htmlFor='true' className='cursor-pointer'>
+                    <input
+                      type='radio'
+                      id='true'
+                      name='finished'
+                      className='mt-4'
+                      checked={finished}
+                      onChange={() => setFinished(true)}
+                    />
+                    完了
+                  </label>
+                  <label htmlFor='false' className='cursor-pointer'>
+                    <input
+                      type='radio'
+                      id='false'
+                      name='publish'
+                      checked={!finished}
+                      onChange={() => setFinished(false)}
+                    />
+                    未完了
+                  </label>
+                </div>
+              )}
+            </div>
+          </div>
+          <div className='flex justify-end'>
+            <button
+              type='submit'
+              className='py-1 px-3 w-[67px] text-lg border-2 border-blue-500 bg-blue-500 text-white rounded duration-300 hover:bg-white hover:text-blue-500 cursor-pointer'
+            >
+              {method === 'post' ? '作成' : '更新'}
+            </button>
+          </div>
         </form>
+
+        {/* 編集ボタンは作らず、チェックボックスをクリックでfinishedだけ、逆にする
+        　　 完了したのを、別の場所で表示してそこで削除出来るようにする */}
+
+        <section className='mt-10'>
+          <p>☐未完了</p>
+          {todos &&
+            todos
+              .map((_, i, a) => a[a.length - 1 - i])
+              .map(
+                (v, i) =>
+                  !v.finished && (
+                    <div
+                      key={i}
+                      className='my-4 py-4 px-10 bg-white rounded-2xl'
+                    >
+                      <div className='flex justify-between'>
+                        <h4 className='text-2xl'>
+                          <input
+                            type='checkbox'
+                            checked={v.finished}
+                            id='finished'
+                          />
+                          <label htmlFor='finished' className='ml-2'>
+                            {v.title}
+                          </label>
+                        </h4>
+                        <p>
+                          {[...Array(v.importance)].map((v, i) => (
+                            <span key={i}>☆</span>
+                          ))}
+                        </p>
+                      </div>
+                      {/* <p>{v.content}</p> くりっくしたら表示とかで */}
+                      {/* <p>user_id: {v.user_id}</p> */}
+                      <p className='font-mono text-sm'>
+                        {v.created_at.substring(0, 10)}
+                      </p>
+                      {/* <button
+                        onClick={() => setUpdateTodo(v)}
+                        className='w-[67px] py-1 px-3 text-lg border-2 border-blue-500 bg-blue-500 text-white rounded duration-300 hover:bg-white hover:text-blue-500 cursor-pointer'
+                      >
+                        編集
+                      </button>
+                      <button
+                        onClick={() => deleteTodo(v.id)}
+                        className='w-[67px] py-1 px-3 text-lg border-2 border-red-500 bg-red-500 text-white rounded duration-300 hover:bg-white hover:text-red-500 cursor-pointer'
+                      >
+                        削除
+                      </button> */}
+                    </div>
+                  )
+              )}
+        </section>
+
+        <section className='mt-10'>
+          <p>✅完了済み</p>
+          {todos &&
+            todos
+              .map((_, i, a) => a[a.length - 1 - i])
+              .map(
+                (v, i) =>
+                  v.finished && (
+                    <div
+                      key={i}
+                      className='my-4 py-4 px-10 bg-white rounded-2xl'
+                    >
+                      <div className='flex justify-between'>
+                        <h4 className='text-2xl'>
+                          <input
+                            type='checkbox'
+                            checked={v.finished}
+                            id='finished'
+                          />
+                          <label htmlFor='finished' className='ml-2'>
+                            {v.title}
+                          </label>
+                        </h4>
+                        <p>
+                          {[...Array(v.importance)].map((v, i) => (
+                            <span key={i}>☆</span>
+                          ))}
+                        </p>
+                      </div>
+                      {/* <p>{v.content}</p> くりっくしたら表示とかで */}
+                      {/* <p>user_id: {v.user_id}</p> */}
+                      <p className='font-mono text-sm'>
+                        {v.created_at.substring(0, 10)}
+                      </p>
+                      <button
+                        onClick={() => setUpdateTodo(v)}
+                        className='w-[67px] py-1 px-3 text-lg border-2 border-blue-500 bg-blue-500 text-white rounded duration-300 hover:bg-white hover:text-blue-500 cursor-pointer'
+                      >
+                        編集
+                      </button>
+                      <button
+                        onClick={() => deleteTodo(v.id)}
+                        className='w-[67px] py-1 px-3 text-lg border-2 border-red-500 bg-red-500 text-white rounded duration-300 hover:bg-white hover:text-red-500 cursor-pointer'
+                      >
+                        削除
+                      </button>
+                    </div>
+                  )
+              )}
+        </section>
 
         <div>
           {/* {users &&
@@ -237,34 +372,6 @@ const Home: NextPage = () => {
                 <li>update: {v.updated_at}</li>
               </ul>
             ))} */}
-        </div>
-
-        <div>
-          {todos &&
-            todos.map((v, i) => (
-              <ul key={i} className='my-4'>
-                <li>id: {v.id}</li>
-                <li>user_id: {v.user_id}</li>
-                <li>title: {v.title}</li>
-                <li>content: {v.content}</li>
-                <li>important: {v.importance}</li>
-                <li>finished: {v.finished ? 'true' : 'false'}</li>
-                <li>create: {v.created_at}</li>
-                <li>update: {v.updated_at}</li>
-                <li
-                  onClick={() => setUpdateTodo(v)}
-                  className='w-[67px] py-1 px-3 text-lg border-2 border-blue-500 bg-blue-500 text-white rounded duration-300 hover:bg-white hover:text-blue-500 cursor-pointer'
-                >
-                  編集
-                </li>
-                <li
-                  onClick={() => deleteTodo(v.id)}
-                  className='w-[67px] py-1 px-3 text-lg border-2 border-red-500 bg-red-500 text-white rounded duration-300 hover:bg-white hover:text-red-500 cursor-pointer'
-                >
-                  削除
-                </li>
-              </ul>
-            ))}
         </div>
       </main>
     </Layout>

@@ -8,8 +8,8 @@ type Props = {
 
 const Layout: React.FC<Props> = (props) => {
   return (
-    <div className='px-[30px] pb-[50px] min-h-screen bg-gray-200 w-full overflow-hidden text-[20px]'>
-      <div className='max-w-[1000px] mx-auto'>
+    <div className='px-[30px] pb-[50px] bg-lime-100 min-h-screen w-full overflow-hidden text-[20px]'>
+      <div className='max-w-[1000px] mx-auto font-serif'>
         <Header />
 
         <main className='mt-10'>{props.children}</main>

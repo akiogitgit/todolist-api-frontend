@@ -8,6 +8,7 @@ const Header: FC = () => {
         <Link href='/'>index</Link>
         <div className='w-[67px] py-1 px-3 text-lg border-2 border-black bg-black text-white rounded duration-300 hover:bg-white hover:text-black cursor-pointer'>
           <Link href='/register'>登録</Link>
+          <Link href='/shareposUser'>share-pos</Link>
         </div>
         <div className='w-[100px] py-1 px-3 text-lg border-2 border-black bg-black text-white rounded duration-300 hover:bg-white hover:text-black cursor-pointer'>
           <Link href='/myPage'>マイページ</Link>

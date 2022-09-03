@@ -163,6 +163,10 @@ const Home: NextPage = () => {
   //     updateTodo()
   //   }
   // }
+
+  const switchFinished = (id2: number, finished2: boolean) => {
+    console.log('id:', id2, 'finished:', finished2)
+  }
   return (
     <Layout>
       <Head>
@@ -262,6 +266,7 @@ const Home: NextPage = () => {
 
         <section className='mt-10'>
           <p>☐未完了</p>
+          {/* todosを逆順にして表示 */}
           {todos &&
             todos
               .map((_, i, a) => a[a.length - 1 - i])
@@ -273,15 +278,16 @@ const Home: NextPage = () => {
                       className='my-4 py-4 px-10 bg-white rounded-2xl'
                     >
                       <div className='flex justify-between'>
-                        <h4 className='text-2xl'>
+                        <h4
+                          className='text-2xl'
+                          onClick={() => switchFinished(v.id, v.finished)}
+                        >
                           <input
                             type='checkbox'
                             checked={v.finished}
-                            id='finished'
+                            id='finished2'
                           />
-                          <label htmlFor='finished' className='ml-2'>
-                            {v.title}
-                          </label>
+                          <span className='ml-2'>{v.title}</span>
                         </h4>
                         <p>
                           {[...Array(v.importance)].map((v, i) => (
@@ -324,15 +330,16 @@ const Home: NextPage = () => {
                       className='my-4 py-4 px-10 bg-white rounded-2xl'
                     >
                       <div className='flex justify-between'>
-                        <h4 className='text-2xl'>
+                        <h4
+                          className='text-2xl'
+                          onClick={() => switchFinished(v.id, v.finished)}
+                        >
                           <input
                             type='checkbox'
                             checked={v.finished}
-                            id='finished'
+                            id='finished2'
                           />
-                          <label htmlFor='finished' className='ml-2'>
-                            {v.title}
-                          </label>
+                          <span className='ml-2'>{v.title}</span>
                         </h4>
                         <p>
                           {[...Array(v.importance)].map((v, i) => (
